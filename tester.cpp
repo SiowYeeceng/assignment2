@@ -45,7 +45,10 @@ public:
     // void generateAlienProperties(int &life, int &attack, int &range);
     // void generateZombies(int &numOfZombies, int &rows, int &columns, std::string **arr, int **placeZombie);
 };
-
+int test()
+{
+    return 0;
+}
 class Zombie
 {
 private:
