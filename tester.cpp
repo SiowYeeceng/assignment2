@@ -22,6 +22,11 @@ public:
     void setObject(int x, int y, char ch);  
 };
 
+int test()
+{
+    return 0;
+}
+
 class Alien
 {
 private:
