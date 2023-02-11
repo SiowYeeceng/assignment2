@@ -705,6 +705,7 @@ void game(int row, int column, int zombie, bool &mainload)
                             }
                         }
                         break;
+                        stirng comm = "haha";
                     }
                     case 'r':
                         com = 's';
