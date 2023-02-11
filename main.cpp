@@ -212,7 +212,7 @@ void board(int row, int column, int zombie, char *random, int alife, int aattack
          << "-> Alien   : Life " << alife << ", Attack " << aattack << endl;
     for (z = 0; z < zombie; z++)
     {
-        cout << "   Zombie " << z + 1 << ": Life " << *(zombdata + z * 7) << ", Attack " << *(zombdata + z * 7 + 1) << ", Range " << *(zombdata + z * 7+ 2) << endl;
+        cout << "   Zombie " << z + 1 << ": Life " << *(zombdata + z * 7) << ", Attack " << *(zombdata + z * 7 + 1) << ", Range " << *(zombdata + z * 7 + 2) << endl;
     }
     cout << endl;
 }
@@ -260,6 +260,7 @@ void game(int row, int column, int zombie, bool &mainload)
     bool win = false;
     bool zombiedead = false;
     bool playerquit = false;
+    bool aliendead = false;
     char com, ran;
     int r, c, z;
     int w = (column * 2 - 19) / 2;
@@ -267,10 +268,10 @@ void game(int row, int column, int zombie, bool &mainload)
     int aattack = 0;
     int zombiedeadnum = 0;
     int zlife, zattack, range;
-    vector<char> object = {'^', 'v', '<', '>', 'h', 'p', 'r', 'e'};
+    vector<char> object = {'^', 'v', '<', '>', 'h', 'p', 'r', 'e', 'B'};
     vector<char> norock = {'^', 'v', '<', '>', 'h', 'p', 'e'};
     char random[50][50];
-    int zombdata[4][7];//life attack range zombieinrange(for pod) row column numberofthingsbesidezombie
+    int zombdata[4][7]; // life attack range zombieinrange(for pod) row column numberofthingsbesidezombie
     srand(time(NULL));
     int o = object.size();
     int nrock = norock.size();
@@ -387,9 +388,7 @@ void game(int row, int column, int zombie, bool &mainload)
                             }
                         }
                         MyFile.close();
-                        cout << "Press any key to continue . . .";
-                        string cintocontinue;
-                        cin >> cintocontinue;
+                        // system("pause")
                         mainload = false;
                         board(row, column, zombie, (char *)random, alife, aattack, (int *)zombdata);
                         cout << "command> ";
@@ -473,9 +472,9 @@ void game(int row, int column, int zombie, bool &mainload)
                             MyFile << random[i][j] << endl;
                         }
                     }
-                    for (int z = 0; z < zombie; z++)
+                    for (int z = 0; z <= zombie; z++)
                     {
-                        for (int j = 0; j < 7; j++)
+                        for (int j = 0; j <= 7; j++)
                         {
                             MyFile << zombdata[z][j] << endl;
                         }
@@ -519,18 +518,16 @@ void game(int row, int column, int zombie, bool &mainload)
                             }
                             // cout << endl;
                         }
-                        for (int z = 0; z < zombie; z++)
+                        for (int z = 0; z <= zombie; z++)
                         {
-                            for (int j = 0; j < 7; j++)
+                            for (int j = 0; j <= 7; j++)
                             {
                                 MyFile >> zombdata[z][j];
                             }
                         }
                         MyFile.close();
-                        cout << "Press any key to continue . . .";
-                        string cintocontinue;
-                        cin >> cintocontinue;
-                        // system("cls");
+                        // system("pause")
+                        //  system("cls");
                     }
                 }
                 else if (command == "quit")
@@ -724,6 +721,25 @@ void game(int row, int column, int zombie, bool &mainload)
                         nextcom = com;
                         alienstatus = "Alien finds an empty space.\n";
                         break;
+                    case 'B':
+                        alife = alife - 10;
+                        if (alife <= 10)
+                        {
+                            alife = 0;
+                            nextcom = 's';
+                            aliendead = true;
+                            movedone = true;
+                            alienstatus = "Alien hit a bomb, life is decreased by 10\n";
+                        }
+                        else
+                        {
+                            com = 's';
+                            nextcom = 's';
+                            ran = norock[rand() % nrock];
+                            random[gr][gc] = ran;
+                            alienstatus = "Alien hit a bomb and stop, life is decreased by 10\n";
+                        }
+                        break;
                     default:
                         com = 's';
                         alienstatus = "Alien reached the side of the game.\n";
@@ -811,7 +827,8 @@ void game(int row, int column, int zombie, bool &mainload)
             {
                 zombiedead = true;
             }
-            if (zombiedead == false && playerquit == false)
+
+            if (zombiedead == false && playerquit == false && aliendead == false)
             {
                 cout << "Alien's turn ended.\n";
                 cout << "Press any key to continue . . .";
@@ -869,7 +886,8 @@ void game(int row, int column, int zombie, bool &mainload)
                         {
                             while (!zombiemovedone)
                             {
-                                if (zombdata[z][6] < 4);
+                                if (zombdata[z][6] < 4)
+                                    ;
                                 {
                                     zombiecanmove = true;
                                     zr = zombdata[z][4];
@@ -963,7 +981,7 @@ void game(int row, int column, int zombie, bool &mainload)
                                 if (zombdata[z][6] == 4)
                                 {
                                     zombiemovedone = true;
-                                }           
+                                }
                             }
                             board(row, column, zombie, (char *)random, alife, aattack, (int *)zombdata);
                             if (zombdata[z][6] < 4)
@@ -997,6 +1015,7 @@ void game(int row, int column, int zombie, bool &mainload)
                                         alieninrange = true;
                                         if (alife <= 0)
                                         {
+                                            alife = 0;
                                             cout << "Alien die.\nYou lose the game!" << endl;
                                             turn = true;
                                             win = true;
@@ -1029,8 +1048,6 @@ void game(int row, int column, int zombie, bool &mainload)
                             }
                             zombdata[z][6] = 0;
                         }
-                        
-                        
                     }
                     zombieturndone = true;
                 }
@@ -1047,6 +1064,12 @@ void game(int row, int column, int zombie, bool &mainload)
             }
             else if (playerquit == true)
             {
+                turn = true;
+                win = true;
+            }
+            else if (aliendead = true)
+            {
+                cout << "Alien Dead\nYou lose!!!" << endl;
                 turn = true;
                 win = true;
             }
